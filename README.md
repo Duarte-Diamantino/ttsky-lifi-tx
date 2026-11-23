@@ -1,42 +1,73 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# Transmissor LiFi digital reconfigurável (Tiny Tapeout, SKY130)
 
-# Tiny Tapeout Verilog Project Template
+ASIC que recebe bytes de 8 bits e os converte num sinal digital modulado para um LED (visível ou
+infravermelho) através de um driver externo. A modulação escolhe-se por pinos: **OOK**,
+**Manchester** ou **4‑PPM**, com uma 4.ª configuração reservada. Há 8 débitos e uma trama com
+preâmbulo, SFD e bits de controlo, para que um recetor externo identifique o início e o fim de
+cada transmissão.
 
-- [Read the documentation for project](docs/info.md)
+| | |
+|---|---|
+| Topo | `tt_um_duarte_diamantino_lifi_tx` (`src/project.v`) |
+| Débito | `f_clk / 4^(SPEED+1)`: 2,5 Mbit/s … 153 bit/s a 10 MHz |
+| Área | 314 células sky130, 66 FF, 2611 µm² ≈ 16 % de **1 tile** |
+| Testes | sistema (Fases 1–8), unitários, cocotb TT, pós-síntese genérica e sky130, Wokwi ≡ RTL; 14/14 mutações detetadas |
 
-## What is Tiny Tapeout?
+![Trama nos três modos](docs/img/timing_overview.svg)
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+## Início rápido (WSL2)
 
-To learn more and get started, visit https://tinytapeout.com.
+```bash
+bash tools/install_tools_wsl.sh   # uma vez: OSS CAD Suite + liberty sky130 (sem sudo)
+cadenv                            # ativa as ferramentas neste terminal
+make all                          # lint, testes, VCD, síntese, área, pós-síntese, Wokwi
+make cocotb                       # testes do template Tiny Tapeout
+gtkwave waves/ppm.vcd waves/demo.gtkw
+```
 
-## Set up your Verilog project
+Guia completo para Windows 11: [docs/WSL2.md](docs/WSL2.md).
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+## Documentação
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+| Documento | Conteúdo |
+|---|---|
+| [docs/DESIGN.md](docs/DESIGN.md) | Especificação: diagrama de blocos, mapa de pinos, convenções temporais, diagramas temporais, protocolo de trama, handshake, máquina de estados, verificação, área, fases |
+| [docs/info.md](docs/info.md) | Folha de dados Tiny Tapeout (inglês) |
+| [docs/WSL2.md](docs/WSL2.md) | Instalação e utilização no Windows 11 + WSL2, submissão ao TT |
+| [docs/WOKWI.md](docs/WOKWI.md) | Investigação Wokwi e versão gráfica simplificada |
 
-## Enable GitHub actions to build the results page
+## Estrutura
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+```
+info.yaml                 metadados Tiny Tapeout (yaml_version 6, 1x1, 10 MHz)
+src/                      RTL sintetizável + config.json (LibreLane, template TT)
+  project.v               wrapper tt_um_duarte_diamantino_lifi_tx (pinos, uio_oe)
+  lifi_tx_core.v          integração + registo de saída
+  lifi_input_if.v         sincronizador LOAD, registo de entrada, aceita/rejeita
+  lifi_shiftreg.v         shift register 8 b
+  lifi_clkdiv.v           divisor configurável
+  lifi_symtimer.v         temporizador de símbolos
+  lifi_ctrl_fsm.v         FSM + enquadramento
+  lifi_modulators.v       OOK, Manchester, 4-PPM, mux
+sim/                      testbenches Verilog auto-verificáveis
+test/                     testes cocotb do template TT (correm no CI, RTL e gate-level)
+synth/                    scripts Yosys (genérico e sky130) + relatório de área
+waves/                    VCD de demonstração + configurações GTKWave (.gtkw)
+wokwi/                    diagram.json simplificado, conversor e testbench de equivalência
+docs/                     documentação + diagramas SVG gerados da simulação
+tools/                    instalação das ferramentas no WSL
+.github/workflows/        gds.yaml e test.yaml do template TT (ttsky26d)
+```
 
-## Resources
+## Submissão
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
+Este repositório foi criado a partir de https://github.com/TinyTapeout/ttsky-verilog-template
+(workflows do shuttle SKY aberto) e o topo já tem nome único (`tt_um_duarte_diamantino_lifi_tx`).
 
-## What next?
+1. Confirma em *Actions* que `gds`, `test` e `docs` ficam verdes (área e timing reais).
+2. Quando houver um shuttle SKY130 aberto que te sirva, submete em https://app.tinytapeout.com
+   (ou altera uma submissão existente com o guia *Change your submitted project repository*).
+3. Para um shuttle IHP ou GF, cria um repositório novo a partir do template dessa tecnologia e
+   copia `src/`, `test/`, `docs/` e `info.yaml`; a área muda e tem de ser medida de novo.
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+Licença: Apache-2.0 (identificador SPDX em cada ficheiro, ficheiro `LICENSE` do template).

@@ -1,0 +1,45 @@
+[*]
+[*] GTKWave - testbench de sistema do transmissor LiFi
+[*] Uso:  gtkwave waves/tb_lifi_tx.vcd waves/tb_lifi_tx.gtkw
+[*]
+[size] 1600 900
+[pos] -1 -1
+[treeopen] tb_lifi_tx.
+[treeopen] tb_lifi_tx.dut.
+[treeopen] tb_lifi_tx.dut.u_core.
+@820
+tb_lifi_tx.test_name[320:1]
+@200
+-Anfitriao
+@28
+tb_lifi_tx.clk
+tb_lifi_tx.rst_n
+@22
+tb_lifi_tx.ui_in[7:0]
+tb_lifi_tx.uio_in[7:0]
+@200
+-Estado e handshake
+@28
+tb_lifi_tx.BUSY
+tb_lifi_tx.READY
+tb_lifi_tx.DONE
+tb_lifi_tx.ERR
+tb_lifi_tx.SYNC
+@24
+tb_lifi_tx.dut.u_core.u_fsm.state[2:0]
+tb_lifi_tx.dut.u_core.u_fsm.cnt[2:0]
+tb_lifi_tx.dut.u_core.u_sym.slot[1:0]
+@22
+tb_lifi_tx.dut.u_core.u_in.hold_data[7:0]
+@28
+tb_lifi_tx.dut.u_core.u_in.hold_valid
+tb_lifi_tx.dut.u_core.u_fsm.mode_q[1:0]
+@24
+tb_lifi_tx.dut.u_core.u_fsm.speed_q[2:0]
+@200
+-Saida otica
+@28
+tb_lifi_tx.BITCLK
+tb_lifi_tx.TXBIT
+tb_lifi_tx.LED
+tb_lifi_tx.LED_N

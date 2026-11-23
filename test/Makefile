@@ -6,7 +6,8 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = lifi_input_if.v lifi_clkdiv.v lifi_symtimer.v lifi_shiftreg.v \
+                  lifi_modulators.v lifi_ctrl_fsm.v lifi_tx_core.v project.v
 
 ifneq ($(GATES),yes)
 

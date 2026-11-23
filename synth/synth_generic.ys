@@ -1,0 +1,28 @@
+# =============================================================================
+#  Sintese Yosys generica (independente da tecnologia)
+#  Uso (na raiz do projeto):  yosys -s synth/synth_generic.ys
+#  Produz: build/netlist_generic.v (para simulacao pos-sintese) + estatisticas
+# =============================================================================
+
+read_verilog -sv src/lifi_input_if.v
+read_verilog -sv src/lifi_clkdiv.v
+read_verilog -sv src/lifi_symtimer.v
+read_verilog -sv src/lifi_shiftreg.v
+read_verilog -sv src/lifi_modulators.v
+read_verilog -sv src/lifi_ctrl_fsm.v
+read_verilog -sv src/lifi_tx_core.v
+read_verilog -sv src/project.v
+
+hierarchy -check -top tt_um_duarte_diamantino_lifi_tx
+
+# Estatisticas por modulo (antes de achatar) - util para ver o peso de cada bloco
+synth -top tt_um_duarte_diamantino_lifi_tx -run begin:fine
+tee -o build/synth_hier_stat.txt stat
+
+# Sintese completa e achatada
+synth -top tt_um_duarte_diamantino_lifi_tx -flatten
+opt_clean -purge
+check -assert
+tee -o build/synth_generic_stat.txt stat
+
+write_verilog -noattr build/netlist_generic.v

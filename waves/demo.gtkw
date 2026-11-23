@@ -1,0 +1,36 @@
+[*]
+[*] GTKWave - trama de demonstracao (0x1B, 0xE4)
+[*] Uso:  gtkwave waves/ook.vcd        waves/demo.gtkw
+[*]       gtkwave waves/manchester.vcd waves/demo.gtkw
+[*]       gtkwave waves/ppm.vcd        waves/demo.gtkw
+[*]
+[size] 1600 900
+[pos] -1 -1
+[treeopen] tb_waves.
+@28
+tb_waves.clk
+tb_waves.rst_n
+@22
+tb_waves.ui_in[7:0]
+tb_waves.uio_in[7:0]
+@200
+-Controlo
+@28
+tb_waves.READY
+tb_waves.BUSY
+tb_waves.DONE
+tb_waves.SYNC
+@24
+tb_waves.dut.u_core.u_fsm.state[2:0]
+tb_waves.dut.u_core.u_fsm.cnt[2:0]
+tb_waves.dut.u_core.u_sym.slot[1:0]
+tb_waves.dut.u_core.u_fsm.sym[1:0]
+@28
+tb_waves.dut.u_core.u_div.tick
+tb_waves.dut.u_core.u_sym.sym_end
+@200
+-Saida
+@28
+tb_waves.BIT_CLK
+tb_waves.TX_BIT
+tb_waves.LED

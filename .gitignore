@@ -11,3 +11,9 @@ test/sim_build
 test/__pycache__/
 test/results.xml
 test/gate_level_netlist.v
+*.vvp
+build/
+.vscode/*.log
+!waves/ook.vcd
+!waves/manchester.vcd
+!waves/ppm.vcd
